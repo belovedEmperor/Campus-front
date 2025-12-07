@@ -1,3 +1,103 @@
+# Campus-front
+<!-- [Link to deployed page](https://belovedemperor.github.io/Bank-of-React/) -->
+
+Team Members: Cheng Yue (username: CY343), Christopher Altamirano (username: caltam600), and Jason Huang (username: belovedEmperor)
+
+## Documentation
+### Feature Requirements
+Pages & Views
+*   **Home Page**: A landing page with links to "All Campuses" and "All Students".
+*   **All Campuses View**:
+    *   Display all campuses (Name + Image).
+    *   If no campuses exist, display a clear message ("No campuses registered").
+    *   "X" button on each campus card to delete it.
+    *   "Add Campus" button to navigate to the form.
+*   **Single Campus View**:
+    *   Display full details: Name, Image, Address, Description.
+    *   List all students enrolled at this campus.
+    *   If no students are enrolled, display "No students enrolled".
+    *   Buttons to **Edit** or **Delete** the campus.
+*   **All Students View**:
+    *   Display all students (Name + Image).
+    *   If no students exist, display "No students registered".
+    *   "X" button on each student card to delete them.
+    *   "Add Student" button.
+*   **Single Student View**:
+    *   Display full details: Name, Email, GPA, Image.
+    *   Display the **Name of the Campus** they attend (clickable link to that Campus).
+    *   If not enrolled, display "Not enrolled in any campus".
+    *   Buttons to **Edit** or **Delete** the student.
+
+Forms & Interactivity
+*   **Add/Edit Campus Form**:
+    *   Fields: Name, Address, Description, Image URL.
+    *   **Validation**: Prevent submission if Name or Address is empty.
+*   **Add/Edit Student Form**:
+    *   Fields: First Name, Last Name, Email, GPA, Image URL, Campus ID (Select/Dropdown).
+    *   **Validation**: Prevent submission if required fields are empty. Ensure GPA is numeric (0.0 - 4.0).
+*   **Real-time Updates**: When an item is deleted or added, the view should update immediately (via state change) without requiring a manual page refresh.
+
+### Application Architecture Description and Diagram
+
+### Epics, User Stories, and Acceptance Criteria
+#### **Epic: Navigation & Home**
+1.  **Navigation Bar**
+    *   *User Story:* As a user, I want a permanent navigation bar so I can easily switch between Home, Campuses, and Students at any time.
+2.  **Home Page**
+    *   *User Story:* As a user, I want a welcoming landing page that directs me where to go.
+
+#### **Epic: Campus UI**
+3.  **Browse Campuses**
+    *   *User Story:* As a user, I want to see a grid or list of all campuses to see what options are available.
+    *   *Acceptance Criteria:*
+        *   Displays Name and Image.
+        *   Clicking a campus navigates to the Single Campus View.
+        *   Shows "No campuses" if the database is empty.
+4.  **View Campus Details**
+    *   *User Story:* As a user, I want to see detailed information about a campus and who goes there.
+    *   *Acceptance Criteria:*
+        *   Shows Address and Description.
+        *   Lists students enrolled (clickable links to Student Profiles).
+5.  **Add Campus (Form)**
+    *   *User Story:* As an user, I want a form to register a new campus.
+    *   *Acceptance Criteria:*
+        *   Form validates that Name and Address are present.
+        *   On submit, redirects to the new Campus's page or the All Campuses view.
+6.  **Edit Campus**
+    *   *User Story:* As an user, I want to fix mistakes in a campus record.
+    *   *Acceptance Criteria:*
+        *   Form pre-fills with existing data.
+        *   Changes are reflected immediately after saving.
+
+#### **Epic: Student UI**
+7.  **Browse Students**
+    *   *User Story:* As a user, I want to see a list of all students.
+    *   *Acceptance Criteria:*
+        *   Displays Name.
+        *   Clicking a student navigates to the Single Student View.
+8.  **View Student Profile**
+    *   *User Story:* As a user, I want to see a student's grades and where they go to school.
+    *   *Acceptance Criteria:*
+        *   Shows GPA and Email.
+        *   Shows a link to their Campus. If they don't have one, it says so clearly.
+9.  **Add Student (Form)**
+    *   *User Story:* As an user, I want to enroll a student and assign them to a campus immediately.
+    *   *Acceptance Criteria:*
+        *   Includes a dropdown or input to select a Campus.
+        *   Validates GPA is between 0.0 and 4.0.
+10. **Delete Functionality (Global)**
+    *   *User Story:* As an user, I want to easily remove students or campuses from the list view.
+    *   *Acceptance Criteria:*
+        *   Each item in the "All" views has a delete button (e.g., an 'X' icon).
+        *   Clicking it removes the item from the screen and database.
+
+### Project Schedule
+<!-- [Github Project/Gantt Chart Link](https://github.com/users/belovedEmperor/projects/4) -->
+<!---->
+<!-- ![[CSci 395 - Project 3 - Bank of React-1762211427111.webp]] -->
+
+***
+
 # client-starter-code
 
 This repository is the client (front-end) starter code for Final Project - Full-Stack CRUD Application.

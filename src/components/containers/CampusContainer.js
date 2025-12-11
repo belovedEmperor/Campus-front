@@ -5,55 +5,64 @@ The Container component is responsible for stateful logic and data fetching, and
 passes data (if any) as props to the corresponding View component.
 If needed, it also defines the component's "connect" function.
 ================================================== */
-import Header from './Header';
+import Header from "./Header";
 import React, { Component } from "react";
 import { connect } from "react-redux";
-import { fetchCampusThunk, fetchAllStudentsThunk, editStudentThunk } from "../../store/thunks";
+import {
+  fetchCampusThunk,
+  fetchAllStudentsThunk,
+  editStudentThunk,
+} from "../../store/thunks";
 
 import { CampusView } from "../views";
 
 class CampusContainer extends Component {
-  constructor(props) { // Initialize state
+  constructor(props) {
+    // Initialize state
     super(props);
     this.state = {
-      selectedStudentId: ""
-    };} 
+      selectedStudentId: "",
+    };
+  }
   // Get the specific campus data from back-end database
   componentDidMount() {
     // Get campus ID from URL (API link)
     this.props.fetchCampus(this.props.match.params.id);
     this.props.fetchAllStudents(); // Fetch all students for adding to campus
   }
-    setSelectedStudentId = (id) => {
+  setSelectedStudentId = (id) => {
     this.setState({ selectedStudentId: id });
-  }
+  };
 
   addStudentToCampus = (studentId) => {
-    const student = this.props.allStudents.find(s => s.id === parseInt(studentId));
+    const student = this.props.allStudents.find(
+      (s) => s.id === parseInt(studentId),
+    );
     if (student) {
       this.props.editStudent({ ...student, campusId: this.props.campus.id });
       this.setState({ selectedStudentId: "" }); // reset select
     }
-  }
+  };
 
   removeStudentFromCampus = (studentId) => {
-    const student = this.props.allStudents.find(s => s.id === studentId);
+    const student = this.props.allStudents.find((s) => s.id === studentId);
     if (student) {
       this.props.editStudent({ ...student, campusId: null });
     }
-  }
+  };
   // Render a Campus view by passing campus data as props to the corresponding View component
   render() {
     return (
       <div>
         <Header />
-        <CampusView campus={this.props.campus}
-                    allStudents={this.props.allStudents}
-                    selectedStudentId={this.state.selectedStudentId}
-                    setSelectedStudentId={this.setSelectedStudentId}
-                    addStudentToCampus={this.addStudentToCampus}
-                    removeStudentFromCampus={this.removeStudentFromCampus}
-         />
+        <CampusView
+          campus={this.props.campus}
+          allStudents={this.props.allStudents}
+          selectedStudentId={this.state.selectedStudentId}
+          setSelectedStudentId={this.setSelectedStudentId}
+          addStudentToCampus={this.addStudentToCampus}
+          removeStudentFromCampus={this.removeStudentFromCampus}
+        />
       </div>
     );
   }
@@ -64,8 +73,8 @@ class CampusContainer extends Component {
 // The "mapState" is called when the Store State changes, and it returns a data object of "campus".
 const mapState = (state) => {
   return {
-    campus: state.campus,  // Get the State object from Reducer "campus"
-     allStudents: state.students, // Get the State object from Reducer "students"
+    campus: state.campus, // Get the State object from Reducer "campus"
+    allStudents: state.allStudents, // Get the State object from Reducer "students" --- changed to "allStudents" because "students" causes a bug
   };
 };
 // 2. The "mapDispatch" argument is used to dispatch Action (Redux Thunk) to Redux Store.
@@ -79,6 +88,7 @@ const mapDispatch = (dispatch) => {
 };
 
 // Export store-connected container by default
-// CampusContainer uses "connect" function to connect to Redux Store and to read values from the Store 
+// CampusContainer uses "connect" function to connect to Redux Store and to read values from the Store
 // (and re-read the values when the Store State updates).
 export default connect(mapState, mapDispatch)(CampusContainer);
+

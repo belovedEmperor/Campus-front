@@ -11,9 +11,15 @@ import {
   AllStudentsContainer,
   NewStudentContainer,
   NewCampusContainer,
+<<<<<<< Updated upstream
   EditStudentContainer,
 } from "./components/containers";
 import EditCampusContainer from "./components/containers/EditCampusContainer";
+=======
+  EditCampusContainer,
+  EditStudentContainer,
+} from "./components/containers";
+>>>>>>> Stashed changes
 
 // if you create separate components for adding/editing
 // a student or campus, make sure you add routes to those
@@ -29,6 +35,14 @@ const App = () => {
         <Route exact path="/students" component={AllStudentsContainer} />
         <Route exact path="/newstudent" component={NewStudentContainer} />
         <Route exact path="/student/:id" component={StudentContainer} />
+<<<<<<< Updated upstream
+=======
+        <Route
+          exact
+          path="/edit-student/:id"
+          component={EditStudentContainer}
+        />
+>>>>>>> Stashed changes
         <Route exact path="/newcampus" component={NewCampusContainer} />
         <Route exact path="/editcampus/:id" component={EditCampusContainer} />
         <Route
@@ -40,5 +54,11 @@ const App = () => {
     </div>
   );
 };
+<<<<<<< Updated upstream
 
 export default App;
+=======
+
+export default App;
+
+>>>>>>> Stashed changes

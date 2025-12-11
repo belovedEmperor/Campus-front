@@ -8,6 +8,13 @@ import Button from '@material-ui/core/Button';
 import Typography from '@material-ui/core/Typography';
 import { makeStyles } from '@material-ui/core/styles';
 
+const errorStyle = {
+  color: 'red',
+  fontSize: '14px',
+  marginTop: '5px',
+  marginBottom: '10px',
+  display: 'block'
+};
 // Create styling for the input form
 const useStyles = makeStyles( () => ({
   formContainer:{  
@@ -34,8 +41,10 @@ const useStyles = makeStyles( () => ({
   },
 }));
 
+
+
 const NewStudentView = (props) => {
-  const {handleChange, handleSubmit } = props;
+  const {handleChange, handleSubmit, errors, student } = props;
   const classes = useStyles();
 
   // Render a New Student view with an input form
@@ -65,6 +74,25 @@ const NewStudentView = (props) => {
             <input type="text" name="campusId" onChange={(e) => handleChange(e)} />
             <br/>
             <br/>
+
+           
+            <label style={{color:'#11153e', fontWeight: 'bold'}}>Email: </label>
+            <input type="email" name="email" value={student.email} onChange={handleChange} />
+            {errors.email && <span className={classes.errorText}>{errors.email}</span>}
+            <br/>
+            <br/>
+
+            <label style={{color:'#11153e', fontWeight: 'bold'}}>GPA (0.0-4.0): </label>
+            <input type="number" name="gpa" step="0.1" value={student.gpa} onChange={handleChange} />{errors.gpa && <span className={classes.errorText}>{errors.gpa}</span>}
+            <br/>
+            <br/>
+
+            <label style={{color:'#11153e', fontWeight: 'bold'}}>Image URL: </label>
+            <input type="text" name="imageURL" onChange={(e) => handleChange(e)} />
+            <br/>
+            <br/> 
+            
+
 
             <Button variant="contained" color="primary" type="submit">
               Submit

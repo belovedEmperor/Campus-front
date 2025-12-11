@@ -33,6 +33,22 @@ export const deleteCampusThunk = campusId => async dispatch => {
   }
 };
 
+// Add Campus
+// THUNK CREATOR:
+export const addCampusThunk = (campus) => async (dispatch) => {
+  try {
+    // API "post" call to add campus to database
+    let res = await axios.post(`/api/campuses`, campus);
+
+    // Update Redux store
+    dispatch(ac.addCampus(res.data));
+
+    return res.data;
+  } catch (err) {
+    console.error(err);
+  }
+};
+
 
 // Single Campus
 // THUNK CREATOR:

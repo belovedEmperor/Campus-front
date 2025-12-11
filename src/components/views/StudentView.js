@@ -10,6 +10,9 @@ const StudentView = (props) => {
   const { student } = props;
 
   // Render a single Student view 
+  if (!student || !student.id) {
+    return <h1>Loading student data...</h1>;
+  }
   return (
     <div>
       <h1>{student.firstname + " " + student.lastname}</h1>

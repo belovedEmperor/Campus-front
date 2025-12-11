@@ -47,11 +47,15 @@ class CampusContainer extends Component {
   removeStudentFromCampus = (studentId) => {
     const student = this.props.allStudents.find((s) => s.id === studentId);
     if (student) {
+      // Set campusId to null to unenroll the student
       this.props.editStudent({ ...student, campusId: null });
     }
   };
   // Render a Campus view by passing campus data as props to the corresponding View component
   render() {
+    if (!this.props.campus || !this.props.campus.id) {
+    return <h1>Loading campus data...</h1>;
+  }
     return (
       <div>
         <Header />

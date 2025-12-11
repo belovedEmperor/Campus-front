@@ -1,109 +1,58 @@
-/*==================================================
-NewStudentView.js
-
-The Views component is responsible for rendering web page with data provided by the corresponding Container component.
-It constructs a React component to display the new student page.
-================================================== */
 import Button from '@material-ui/core/Button';
 import Typography from '@material-ui/core/Typography';
 import { makeStyles } from '@material-ui/core/styles';
 
-const errorStyle = {
-  color: 'red',
-  fontSize: '14px',
-  marginTop: '5px',
-  marginBottom: '10px',
-  display: 'block'
-};
-// Create styling for the input form
-const useStyles = makeStyles( () => ({
-  formContainer:{  
-    width: '500px',
-    backgroundColor: '#f0f0f5',
-    borderRadius: '5px',
-    margin: 'auto',
-  },
-  title: {
-    flexGrow: 1,
-    textAlign: 'left',
-    textDecoration: 'none'
-  }, 
-  customizeAppBar:{
-    backgroundColor: '#11153e',
-    shadows: ['none'],
-  },
-  formTitle:{
-    backgroundColor:'#c5c8d6',
-    marginBottom: '15px',
-    textAlign: 'center',
-    borderRadius: '5px 5px 0px 0px',
-    padding: '3px'
-  },
+const useStyles = makeStyles(() => ({
+  formContainer: { width: '500px', backgroundColor: '#f0f0f5', borderRadius: '5px', margin: 'auto', padding: '10px' },
+  formTitle: { backgroundColor:'#c5c8d6', marginBottom:'15px', textAlign:'center', borderRadius:'5px 5px 0 0', padding:'3px' },
+  inputGroup: { marginBottom:'15px', textAlign:'center' },
+  errorText: { color:'red', fontSize:'14px', display:'block' }
 }));
 
-
-
-const NewStudentView = (props) => {
-  const {handleChange, handleSubmit, errors, student } = props;
+const NewStudentView = ({ handleChange, handleSubmit, errors, student }) => {
   const classes = useStyles();
 
-  // Render a New Student view with an input form
   return (
     <div>
       <h1>New Student</h1>
-
-      <div className={classes.root}>
-        <div className={classes.formContainer}>
-          <div className={classes.formTitle}>
-            <Typography style={{fontWeight: 'bold', fontFamily: 'Courier, sans-serif', fontSize: '20px', color: '#11153e'}}>
-              Add a Student
-            </Typography>
+      <div className={classes.formContainer}>
+        <div className={classes.formTitle}>
+          <Typography style={{ fontWeight:'bold', fontFamily:'Courier, sans-serif', fontSize:'20px', color:'#11153e' }}>Add a Student</Typography>
+        </div>
+        <form style={{textAlign:'center'}} onSubmit={handleSubmit}>
+          <div className={classes.inputGroup}>
+            <label>First Name: </label>
+            <input type="text" name="firstname" value={student.firstname} onChange={handleChange} />
+            {errors.firstname && <span className={classes.errorText}>{errors.firstname}</span>}
           </div>
-          <form style={{textAlign: 'center'}} onSubmit={(e) => handleSubmit(e)}>
-            <label style= {{color:'#11153e', fontWeight: 'bold'}}>First Name: </label>
-            <input type="text" name="firstname" onChange ={(e) => handleChange(e)} />
-            <br/>
-            <br/>
-
-            <label style={{color:'#11153e', fontWeight: 'bold'}}>Last Name: </label>
-            <input type="text" name="lastname" onChange={(e) => handleChange(e)} />
-            <br/>
-            <br/>
-
-            <label style={{color:'#11153e', fontWeight: 'bold'}}>Campus Id: </label>
-            <input type="text" name="campusId" onChange={(e) => handleChange(e)} />
-            <br/>
-            <br/>
-
-           
-            <label style={{color:'#11153e', fontWeight: 'bold'}}>Email: </label>
+          <div className={classes.inputGroup}>
+            <label>Last Name: </label>
+            <input type="text" name="lastname" value={student.lastname} onChange={handleChange} />
+            {errors.lastname && <span className={classes.errorText}>{errors.lastname}</span>}
+          </div>
+          <div className={classes.inputGroup}>
+            <label>Email: </label>
             <input type="email" name="email" value={student.email} onChange={handleChange} />
             {errors.email && <span className={classes.errorText}>{errors.email}</span>}
-            <br/>
-            <br/>
-
-            <label style={{color:'#11153e', fontWeight: 'bold'}}>GPA (0.0-4.0): </label>
-            <input type="number" name="gpa" step="0.1" value={student.gpa} onChange={handleChange} />{errors.gpa && <span className={classes.errorText}>{errors.gpa}</span>}
-            <br/>
-            <br/>
-
-            <label style={{color:'#11153e', fontWeight: 'bold'}}>Image URL: </label>
-            <input type="text" name="imageURL" onChange={(e) => handleChange(e)} />
-            <br/>
-            <br/> 
-            
-
-
-            <Button variant="contained" color="primary" type="submit">
-              Submit
-            </Button>
-            <br/>
-            <br/>
-          </form>
           </div>
+          <div className={classes.inputGroup}>
+            <label>GPA: </label>
+            <input type="number" step="0.1" min="0" max="4" name="gpa" value={student.gpa} onChange={handleChange} />
+            {errors.gpa && <span className={classes.errorText}>{errors.gpa}</span>}
+          </div>
+          <div className={classes.inputGroup}>
+            <label>Campus ID: </label>
+            <input type="text" name="campusId" value={student.campusId} onChange={handleChange} />
+          </div>
+          <div className={classes.inputGroup}>
+            <label>Image URL: </label>
+            <input type="text" name="imageURL" value={student.imageURL} onChange={handleChange} />
+          </div>
+          <Button variant="contained" color="primary" type="submit">Submit</Button>
+        </form>
       </div>
-    </div>    
-  )
+    </div>
+  );
 }
 
 export default NewStudentView;

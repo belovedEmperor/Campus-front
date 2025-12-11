@@ -20,6 +20,14 @@ export const deleteCampus = (campusId) => {
   };
 };
 
+// Add Campus
+export const addCampus = (campus) => {
+  return {
+    type: "ADD_CAMPUS",
+    payload: campus,
+  };
+};
+
 
 //Single Campus
 export const fetchCampus = (campus) => {

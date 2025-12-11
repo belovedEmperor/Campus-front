@@ -39,6 +39,12 @@ if (!props.allCampuses.length) {
       {props.allCampuses.map((campus) => (
         <div key={campus.id}>
           <Link to={`/campus/${campus.id}`}>
+          <img 
+            src={campus.imageUrl || "/schoolpic.png"} 
+            alt={campus.name} 
+            style={{ width: "400px", height: "250px", objectFit: "cover" }}
+          />
+
             <h2>{campus.name}</h2>
           </Link>
           <h4>campus id: {campus.id}</h4>
@@ -49,7 +55,7 @@ if (!props.allCampuses.length) {
         </div>
       ))}
       <br/>
-      <Link to={`/`}>
+      <Link to="/newcampus">
         <button>Add New Campus</button>
       </Link>
       <br/><br/>

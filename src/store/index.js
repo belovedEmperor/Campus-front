@@ -8,6 +8,7 @@ import { combineReducers, applyMiddleware, createStore } from 'redux';
 import { createLogger } from 'redux-logger';
 import thunk from 'redux-thunk';
 
+
 // Import all Reducers from the barrel file (/src/store/reducers/index.js)
 import * as reducers from './reducers';
 

@@ -20,27 +20,70 @@ class NewStudentContainer extends Component {
     this.state = {
       firstname: "", 
       lastname: "", 
+      // NEW REQUIRED FIELDS
+      email: "",
+      gpa: 0.0,
       campusId: null, 
+      // NEW STATE FOR VALIDATION
+      errors: {},
       redirect: false, 
       redirectId: null
     };
   }
+  // Helper function to validate data
+  validate = (data) => {
+    const newErrors = {};
+    
+    // 1. REQUIRED FIELD VALIDATION (firstname, lastname, email)
+    if (!data.firstname) {
+      newErrors.firstname = "First name is required.";
+    }
+    if (!data.lastname) {
+      newErrors.lastname = "Last name is required.";
+    }
+    if (!data.email) {
+      newErrors.email = "Email is required.";
+    } else if (!/\S+@\S+\.\S+/.test(data.email)) {
+      newErrors.email = "Email address is invalid.";
+    }
 
-  // Capture input data when it is entered
+    // 2. GPA VALIDATION (0.0 to 4.0)
+    const gpa = parseFloat(data.gpa);
+    if (isNaN(gpa) || gpa < 0.0 || gpa > 4.0) {
+      newErrors.gpa = "GPA must be a number between 0.0 and 4.0.";
+    }
+
+    return newErrors;
+  };
+
   handleChange = event => {
-    this.setState({
-      [event.target.name]: event.target.value
-    });
+  const { name, value } = event.target;
+      
+      // 1. Update the student data portion of the state immediately
+  const updatedState = { ...this.state, [name]: value };
+
+      // 2. Validate the updated state
+  const validationErrors = this.validate(updatedState);
+      
+      // 3. Set BOTH the new input value AND the new errors object
+  this.setState({
+  [name]: value,
+   errors: validationErrors
+  });
   }
 
   // Take action after user click the submit button
   handleSubmit = async event => {
     event.preventDefault();  // Prevent browser reload/refresh after submit.
-
+    const finalErrors = this.validate(this.state);
+    this.setState({ errors: finalErrors });
     let student = {
         firstname: this.state.firstname,
         lastname: this.state.lastname,
-        campusId: this.state.campusId
+        email: this.state.email,
+        gpa: this.state.gpa,
+        imageURL: this.state.imageURL || null,
+        campusId: this.state.campusId || null
     };
     
     // Add new student in back-end database
@@ -52,7 +95,11 @@ class NewStudentContainer extends Component {
       lastname: "", 
       campusId: null, 
       redirect: true, 
-      redirectId: newStudent.id
+      redirectId: newStudent.id,
+      email: "",
+      gpa: 0.0,
+      imageURL: "",
+      errors: {}
     });
   }
 
@@ -74,7 +121,9 @@ class NewStudentContainer extends Component {
         <Header />
         <NewStudentView 
           handleChange = {this.handleChange} 
-          handleSubmit={this.handleSubmit}      
+          handleSubmit={this.handleSubmit}  
+          errors={this.state.errors}
+          student={this.state} // Pass the entire student state for displaying current values    
         />
       </div>          
     );

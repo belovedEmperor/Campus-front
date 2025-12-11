@@ -23,15 +23,41 @@ const CampusView = (props) => {
             <Link to={`/student/${student.id}`}>
               <h2>{name}</h2>
             </Link>
+            <button onClick={() => props.removeStudentFromCampus(student.id)}>
+              Remove
+            </button>
           </div>
         );
       })}
-      <Link to={`/editcampus/${campus.id}`}>
-        <button>Edit Campus</button>
-      </Link>
+
+      <div>
+        <h3>Add a student to this campus:</h3>
+        <select
+          value={props.selectedStudentId || ""}
+          onChange={(e) => props.setSelectedStudentId(e.target.value)}
+        >
+          <option value="">Select a student</option>
+          {props.allStudents
+            .filter(s => !s.campusId || s.campusId !== props.campus.id)
+            .map(s => (
+              <option key={s.id} value={s.id}>
+                {s.firstname} {s.lastname}
+              </option>
+            ))}
+        </select>
+        <button
+          onClick={() => {
+            if (props.selectedStudentId)
+              props.addStudentToCampus(props.selectedStudentId);
+          }}
+        >
+          Add Student
+        </button>
+      </div>
     </div>
   );
 };
 
-export default CampusView;
 
+
+export default CampusView;

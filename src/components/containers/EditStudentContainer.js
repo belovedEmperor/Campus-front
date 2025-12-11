@@ -1,158 +1,110 @@
-/*==================================================
-EditStudentContainer.js
+// src/components/containers/EditStudentContainer.js
 
-The Container component is responsible for stateful logic and data fetching, and
-passes data (if any) as props to the corresponding View component.
-================================================== */
 import React, { Component } from 'react';
 import { connect } from 'react-redux';
-import { Redirect } from 'react-router-dom';
+import { withRouter } from 'react-router-dom';
 import Header from './Header';
 import EditStudentView from '../views/EditStudentView';
 import { fetchStudentThunk, editStudentThunk } from '../../store/thunks';
 
 class EditStudentContainer extends Component {
-    constructor(props) {
-        super(props);
-        this.state = {
-            id: null,
-            firstname: '',
-            lastname: '',
-            email: '',
-            imageURL: '',
-            gpa: 0.0,
-            campusId: null,
-            errors: {},
-            redirect: false,
-            redirectId: null
-        };
+  constructor(props) {
+    super(props);
+    this.state = {
+      id: null,
+      firstname: '',
+      lastname: '',
+      email: '',
+      imageURL: '',
+      gpa: '',
+      campusId: '',
+      errors: {}
+    };
+  }
+
+  componentDidMount() {
+    this.props.fetchStudent(this.props.match.params.id);
+  }
+
+  componentDidUpdate(prevProps) {
+    if ((!this.state.id && this.props.student.id) || prevProps.student.id !== this.props.student.id) {
+      const s = this.props.student;
+      this.setState({
+        id: s.id,
+        firstname: s.firstname || '',
+        lastname: s.lastname || '',
+        email: s.email || '',
+        imageURL: s.imageURL || '',
+        gpa: s.gpa != null ? s.gpa.toString() : '',
+        campusId: s.campusId != null ? s.campusId.toString() : ''
+      });
     }
+  }
 
-    // Fetch data and initialize state with props
-    componentDidMount() {
-        this.props.fetchStudent(this.props.match.params.id);
+  validate = (data) => {
+    const errors = {};
+    if (!data.firstname) errors.firstname = 'First name is required.';
+    if (!data.lastname) errors.lastname = 'Last name is required.';
+    if (!data.email) errors.email = 'Email is required.';
+    else if (!/\S+@\S+\.\S+/.test(data.email)) errors.email = 'Email address is invalid.';
+
+    if (data.gpa !== '') {
+      const gpaValue = parseFloat(data.gpa);
+      if (isNaN(gpaValue) || gpaValue < 0.0 || gpaValue > 4.0) {
+        errors.gpa = 'GPA must be a number between 0.0 and 4.0.';
+      }
     }
+    return errors;
+  };
 
-    // Use prop data to pre-fill state once fetched
-    componentDidUpdate(prevProps) {
-        if (prevProps.student !== this.props.student && this.props.student.id) {
-            const student = this.props.student;
-            this.setState({
-                id: student.id,
-                firstname: student.firstname || '',
-                lastname: student.lastname || '',
-                email: student.email || '',
-                imageURL: student.imageURL || '',
-                gpa: student.gpa !== null ? student.gpa : 0.0,
-                campusId: student.campusId || null,
-            });
-        }
-    }
+  handleChange = (event) => {
+    const { name, value } = event.target;
+    this.setState(prevState => {
+      const updatedState = { ...prevState, [name]: value };
+      return { [name]: value, errors: this.validate(updatedState) };
+    });
+  };
 
-    // Helper function for validation
-    validate = (data) => {
-        const newErrors = {};
-        
-        // Validation: Required fields
-        if (!data.firstname) newErrors.firstname = "First name is required.";
-        if (!data.lastname) newErrors.lastname = "Last name is required.";
-        if (!data.email) newErrors.email = "Email is required.";
-        
-        // Validation: Email format
-        if (data.email && !/\S+@\S+\.\S+/.test(data.email)) {
-            newErrors.email = "Email address is invalid.";
-        }
+  handleSubmit = async (event) => {
+    event.preventDefault();
+    const finalErrors = this.validate(this.state);
+    this.setState({ errors: finalErrors });
+    if (Object.keys(finalErrors).length > 0) return;
 
-        // Validation: GPA (0.0 to 4.0)
-        const gpa = parseFloat(data.gpa);
-        if (isNaN(gpa) || gpa < 0.0 || gpa > 4.0) {
-            newErrors.gpa = "GPA must be a number between 0.0 and 4.0.";
-        }
-        
-        return newErrors;
+    const student = {
+      id: this.state.id,
+      firstname: this.state.firstname,
+      lastname: this.state.lastname,
+      email: this.state.email,
+      imageURL: this.state.imageURL || null,
+      gpa: this.state.gpa === '' ? 0.0 : parseFloat(this.state.gpa),
+      campusId: this.state.campusId === '' ? null : parseInt(this.state.campusId)
     };
 
-    // Handle input change with real-time validation
-    handleChange = (event) => {
-        const { name, value } = event.target;
-        
-        const updatedState = { ...this.state, [name]: value };
+    await this.props.editStudent(student);
+    this.props.history.push(`/student/${this.state.id}`);
+  };
 
-        // Real-time validation
-        const validationErrors = this.validate(updatedState);
-        
-        this.setState({
-            [name]: value,
-            errors: validationErrors
-        });
-    }
-
-    // Handle form submission
-    handleSubmit = async (event) => {
-        event.preventDefault();
-        
-        // Final validation check before submit
-        const finalErrors = this.validate(this.state);
-        this.setState({ errors: finalErrors });
-
-        // Stop submission if errors exist
-        if (Object.keys(finalErrors).length > 0) return;
-
-        let student = {
-            id: this.state.id,
-            firstname: this.state.firstname,
-            lastname: this.state.lastname,
-            email: this.state.email,
-            imageURL: this.state.imageURL || null,
-            gpa: this.state.gpa,
-            campusId: this.state.campusId || null,
-        };
-
-        // Dispatch the edit thunk
-        await this.props.editStudent(student);
-
-        // Redirect to the updated student's page
-        this.setState({
-            redirect: true,
-            redirectId: this.state.id
-        });
-    }
-
-    componentWillUnmount() {
-        this.setState({ redirect: false, redirectId: null });
-    }
-
-    render() {
-        if (this.state.redirect) {
-            return (<Redirect to={`/student/${this.state.redirectId}`} />);
-        }
-        
-        return (
-            <div>
-                <Header />
-                <EditStudentView 
-                    student={this.state}
-                    errors={this.state.errors}
-                    handleChange={this.handleChange} 
-                    handleSubmit={this.handleSubmit}
-                />
-            </div>
-        );
-    }
+  render() {
+    return (
+      <div>
+        <Header />
+        <EditStudentView
+          student={this.state}
+          errors={this.state.errors}
+          handleChange={this.handleChange}
+          handleSubmit={this.handleSubmit}
+        />
+      </div>
+    );
+  }
 }
 
-// Map state and dispatch to props
-const mapState = (state) => {
-    return {
-        student: state.student,
-    };
-};
+const mapState = (state) => ({ student: state.student });
 
-const mapDispatch = (dispatch) => {
-    return {
-        fetchStudent: (id) => dispatch(fetchStudentThunk(id)),
-        editStudent: (student) => dispatch(editStudentThunk(student)),
-    };
-};
+const mapDispatch = (dispatch) => ({
+  fetchStudent: (id) => dispatch(fetchStudentThunk(id)),
+  editStudent: (student) => dispatch(editStudentThunk(student))
+});
 
-export default connect(mapState, mapDispatch)(EditStudentContainer);
+export default withRouter(connect(mapState, mapDispatch)(EditStudentContainer));

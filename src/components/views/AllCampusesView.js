@@ -16,22 +16,20 @@ const AllCampusesView = (props) => {
     }
   };
 
-
   // If there is no campus, display a message.
-if (!props.allCampuses.length) {
-  return (
-    <div>
-      There are no campuses.
-      <br></br>
-      <Link to={`/`}>
-        <button>Add New Campus</button>
-      </Link>
-    </div>
-  );
-}
+  if (!props.allCampuses.length) {
+    return (
+      <div>
+        There are no campuses.
+        <br></br>
+        <Link to={`/newcampus`}>
+          <button>Add New Campus</button>
+        </Link>
+      </div>
+    );
+  }
 
-
-  // If there is at least one campus, render All Campuses view 
+  // If there is at least one campus, render All Campuses view
   return (
     <div>
       <h1>All Campuses</h1>
@@ -39,11 +37,11 @@ if (!props.allCampuses.length) {
       {props.allCampuses.map((campus) => (
         <div key={campus.id}>
           <Link to={`/campus/${campus.id}`}>
-          <img 
-            src={campus.imageUrl || "/schoolpic.png"} 
-            alt={campus.name} 
-            style={{ width: "400px", height: "250px", objectFit: "cover" }}
-          />
+            <img
+              src={campus.imageUrl || "/schoolpic.png"}
+              alt={campus.name}
+              style={{ width: "400px", height: "250px", objectFit: "cover" }}
+            />
 
             <h2>{campus.name}</h2>
           </Link>
@@ -51,14 +49,15 @@ if (!props.allCampuses.length) {
           <p>{campus.address}</p>
           <p>{campus.description}</p>
           <button onClick={() => handleDelete(campus.id)}>Delete</button>
-          <hr/>
+          <hr />
         </div>
       ))}
-      <br/>
+      <br />
       <Link to="/newcampus">
         <button>Add New Campus</button>
       </Link>
-      <br/><br/>
+      <br />
+      <br />
     </div>
   );
 };
@@ -70,3 +69,4 @@ AllCampusesView.propTypes = {
 };
 
 export default AllCampusesView;
+

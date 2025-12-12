@@ -76,6 +76,18 @@ const CampusView = ({
           {renderAddStudentForm()}
         </>
       )}
+      <br />
+      <Link to={`/editcampus/${campus.id}`}>
+        <button style={{ 
+              padding: '10px 20px', 
+              fontSize: '16px', 
+              backgroundColor: '#4CAF50', 
+              color: 'white', 
+              border: 'none', 
+              borderRadius: '5px', 
+              cursor: 'pointer' 
+          }}>Edit Campus Information</button>
+      </Link>
     </div>
   );
 };

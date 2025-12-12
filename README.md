@@ -1,11 +1,40 @@
-# Campus-front
-<!-- [Link to deployed page](https://belovedemperor.github.io/Bank-of-React/) -->
+[GitHub - belovedEmperor/Campus-front](https://github.com/belovedEmperor/Campus-front)
+[GitHub - belovedEmperor/Campus-back](https://github.com/belovedEmperor/Campus-back)
 
 Team Members: Cheng Yue (username: CY343), Christopher Altamirano (username: caltam600), and Jason Huang (username: belovedEmperor)
 
 ## Documentation
 ### Feature Requirements
-Pages & Views
+#### Database Schema & Models
+*   **Campus Model**
+    *   **`name`**: String, Not Null, Not Empty.
+    *   **`imageUrl`**: String, Default value required (use a placeholder URL).
+    *   **`address`**: String, Not Null, Not Empty.
+    *   **`description`**: Text (Large String), Description can be large.
+*   **Student Model**
+    *   **`firstName`**: String, Not Null, Not Empty.
+    *   **`lastName`**: String, Not Null, Not Empty.
+    *   **`email`**: String, Not Null, Not Empty.
+    *   **`imageUrl`**: String, Default value required.
+    *   **`gpa`**: Decimal, Range: 0.0 - 4.0.
+*   **Associations**
+    *   **One-to-Many**: A Campus can have many Students.
+    *   **Belongs-To**: A Student belongs to at most one Campus.
+    *   *Constraint:* If a Campus is deleted, its students should **not** be deleted (their `campusId` should become `null`).
+#### API Endpoints (RESTful Routes)
+- **Campuses (`/api/campuses`)**
+    *   `GET /` : Fetch all campuses.
+    *   `GET /:id` : Fetch a single campus **including** its list of enrolled students.
+    *   `POST /` : Create a new campus.
+    *   `PUT /:id` : Update an existing campus.
+    *   `DELETE /:id` : Delete a campus.
+- **Students (`/api/students`)**
+    *   `GET /` : Fetch all students.
+    *   `GET /:id` : Fetch a single student **including** their associated campus.
+    *   `POST /` : Create a new student.
+    *   `PUT /:id` : Update an existing student.
+    *   `DELETE /:id` : Delete a student.
+#### Pages & Views
 *   **Home Page**: A landing page with links to "All Campuses" and "All Students".
 *   **All Campuses View**:
     *   Display all campuses (Name + Image).
@@ -27,8 +56,7 @@ Pages & Views
     *   Display the **Name of the Campus** they attend (clickable link to that Campus).
     *   If not enrolled, display "Not enrolled in any campus".
     *   Buttons to **Edit** or **Delete** the student.
-
-Forms & Interactivity
+#### Forms & Interactivity
 *   **Add/Edit Campus Form**:
     *   Fields: Name, Address, Description, Image URL.
     *   **Validation**: Prevent submission if Name or Address is empty.
@@ -38,6 +66,34 @@ Forms & Interactivity
 *   **Real-time Updates**: When an item is deleted or added, the view should update immediately (via state change) without requiring a manual page refresh.
 
 ### Application Architecture Description and Diagram
+The frontend uses React Router to navigate between pages:
+- `HomePage` - Root page with links to all other sections
+- `AllCampuses` - Displays all campuses with delete functionality
+- `Campus` - Shows individual campus details
+- `AllStudents` - Displays all students with delete functionality  
+- `Student` - Shows individual student details
+- `NewCampus` - Form to add a new campus
+- `EditCampus` - Form to edit existing campus
+- `NewStudent` - Form to add a new student
+- `EditStudent` - Form to edit existing student
+All pages include a Header component with navigation links.
+
+Uses Redux with Redux Thunk for async operations.
+The store manages four slices:
+- `allCampuses` - List of all campuses
+- `campus` - Single campus data
+- `allStudents` - List of all students  
+- `student` - Single student data
+
+Each page uses a `Container` component for logic/data fetching and a `View` component for presentation.
+Containers connect to Redux via `mapState` and `mapDispatch`, fetching data on mount using thunks.
+
+The backend provides RESTful API routes at `/api/students` and `/api/campuses` with full CRUD operations.
+Uses Sequelize ORM with PostgreSQL for database management.
+
+Containers dispatch thunks → Thunks call backend API via Axios → Actions update Redux store → View components re-render with new props.
+
+<img width="1287" height="611" alt="image" src="https://github.com/user-attachments/assets/276ee597-49a7-4981-9a24-04707c461946" />
 
 ### Epics, User Stories, and Acceptance Criteria
 #### **Epic: Navigation & Home**
@@ -45,104 +101,74 @@ Forms & Interactivity
     *   *User Story:* As a user, I want a permanent navigation bar so I can easily switch between Home, Campuses, and Students at any time.
 2.  **Home Page**
     *   *User Story:* As a user, I want a welcoming landing page that directs me where to go.
-
-#### **Epic: Campus UI**
-3.  **Browse Campuses**
-    *   *User Story:* As a user, I want to see a grid or list of all campuses to see what options are available.
+#### **Epic: Campus Management**
+3.  **View All Campuses**
+    *   *User Story:* As a user, I want to see all campuses so I can browse the university network.
     *   *Acceptance Criteria:*
         *   Displays Name and Image.
         *   Clicking a campus navigates to the Single Campus View.
         *   Shows "No campuses" if the database is empty.
-4.  **View Campus Details**
+    *   *Backend:* `GET /api/campuses` returns an array of all campus objects.
+4.  **View Single Campus**
     *   *User Story:* As a user, I want to see detailed information about a campus and who goes there.
     *   *Acceptance Criteria:*
         *   Shows Address and Description.
         *   Lists students enrolled (clickable links to Student Profiles).
-5.  **Add Campus (Form)**
-    *   *User Story:* As an user, I want a form to register a new campus.
+        *   If no students are enrolled, display "No students enrolled".
+    *   *Backend:* `GET /api/campuses/:id` returns campus metadata AND an array of associated students.
+5.  **Add Campus**
+    *   *User Story:* As a user, I want to add a new campus to the system.
     *   *Acceptance Criteria:*
         *   Form validates that Name and Address are present.
         *   On submit, redirects to the new Campus's page or the All Campuses view.
+    *   *Backend:* `POST /api/campuses` accepts `name`, `address`, etc., validates they aren't empty, and saves to DB.
 6.  **Edit Campus**
-    *   *User Story:* As an user, I want to fix mistakes in a campus record.
+    *   *User Story:* As a user, I want to update campus details (like address or description).
     *   *Acceptance Criteria:*
         *   Form pre-fills with existing data.
         *   Changes are reflected immediately after saving.
-
-#### **Epic: Student UI**
-7.  **Browse Students**
-    *   *User Story:* As a user, I want to see a list of all students.
+    *   *Backend:* `PUT /api/campuses/:id` updates the attributes of a specific campus.
+7.  **Delete Campus**
+    *   *User Story:* As a user, I want to remove a campus that no longer exists.
     *   *Acceptance Criteria:*
-        *   Displays Name.
+        *   Each campus in the "All Campuses" view has a delete button (e.g., an 'X' icon).
+        *   Clicking it removes the campus from the screen and database.
+    *   *Backend:* `DELETE /api/campuses/:id` ensures associated students become "unassigned" (campusId = null) rather than being deleted.
+#### **Epic: Student Management**
+8.  **View All Students**
+    *   *User Story:* As a user, I want to see a list of all students registered in the system.
+    *   *Acceptance Criteria:*
+        *   Displays Name and Image.
         *   Clicking a student navigates to the Single Student View.
-8.  **View Student Profile**
-    *   *User Story:* As a user, I want to see a student's grades and where they go to school.
+        *   Shows "No students" if the database is empty.
+    *   *Backend:* `GET /api/students` returns an array of all student objects.
+9.  **View Single Student**
+    *   *User Story:* As a user, I want to view a student's profile, including their GPA and which campus they attend.
     *   *Acceptance Criteria:*
         *   Shows GPA and Email.
         *   Shows a link to their Campus. If they don't have one, it says so clearly.
-9.  **Add Student (Form)**
-    *   *User Story:* As an user, I want to enroll a student and assign them to a campus immediately.
+    *   *Backend:* `GET /api/students/:id` returns student info AND the associated campus object.
+10. **Add Student**
+    *   *User Story:* As a user, I want to enroll a new student.
     *   *Acceptance Criteria:*
         *   Includes a dropdown or input to select a Campus.
         *   Validates GPA is between 0.0 and 4.0.
-10. **Delete Functionality (Global)**
-    *   *User Story:* As an user, I want to easily remove students or campuses from the list view.
+        *   On submit, redirects to the new Student's page or the All Students view.
+    *   *Backend:* `POST /api/students` accepts student details and validates that `gpa` is between 0.0 and 4.0.
+11. **Edit Student**
+    *   *User Story:* As a user, I want to update a student's information or transfer them to a different campus.
     *   *Acceptance Criteria:*
-        *   Each item in the "All" views has a delete button (e.g., an 'X' icon).
-        *   Clicking it removes the item from the screen and database.
+        *   Form pre-fills with existing data.
+        *   Changes are reflected immediately after saving.
+    *   *Backend:* `PUT /api/students/:id` handles updating standard fields (email, gpa) AND foreign keys (`campusId`).
+12. **Delete Student**
+    *   *User Story:* As a user, I want to remove a student who has left the university.
+    *   *Acceptance Criteria:*
+        *   Each student in the "All Students" view has a delete button (e.g., an 'X' icon).
+        *   Clicking it removes the student from the screen and database.
+    *   *Backend:* `DELETE /api/students/:id` removes the student record permanently.
 
 ### Project Schedule
-<!-- [Github Project/Gantt Chart Link](https://github.com/users/belovedEmperor/projects/4) -->
-<!---->
-<!-- ![[CSci 395 - Project 3 - Bank of React-1762211427111.webp]] -->
+[Github Project/Gantt Chart Link](https://github.com/users/belovedEmperor/projects/6)
 
-***
-
-# client-starter-code
-
-This repository is the client (front-end) starter code for Final Project - Full-Stack CRUD Application.
-
-----------
-### 1. Use the following process to ***import*** the Final Project client starter code repository to your GitHub account as the starter codebase
-1.	Log on to GitHub
-2.	Click on the + sign in the top right corner (next to the user icon)
-3.	In the dropdown menu, select "Import repository"
-4.	A new page will open
-5.	In "Your old repository’s clone URL" field, enter: `https://github.com/johnnylaicode/client-starter-code`
-6.	In "Your new repository details" field, enter your own repository name (e.g., "final-project-client")
-7.	Click on the "Begin import" button to start the process
-8.	After the process completed, your new "final-project-client" repository is created – as a completely independent codebase
-9.	From this point on, you can clone your new repository, make changes, create feature branches, and create/merge pull requests
-
-----------
-### 2. Use the information below to ***clone*** the starter codebase to your local machine
-After creating the starter codebase "final-project-client" repository on GitHub (see above), you can clone it to your local machine. The instructions on how to clone a GitHub repository are available at this [link](https://docs.github.com/en/repositories/creating-and-managing-repositories/cloning-a-repository).
-
-----------
-### 3. Set up and run the client (front-end) application on your local machine
-1.	Start a terminal (e.g., Git Bash) on your local machine.
-2.  Go to the "final-project-client" folder, enter the command to install dependencies: `npm install` 
-3.	Start the client application by entering the command: `npm start` 
-4.	After the client application is successfully started, a web browser is automatically opened at the address: `http://localhost:3000` 
-
-<br/>
-
-## Common Errors You May Encounter
-### Error: ERR_OSSL_EVP_UNSUPPORTED
-This error indicates that your application uses an algorithm or key size not supported by OpenSSL 3.0.
-#### Solution: 
-1. If you use *Windows*, in the `package.json` file, set the "scripts" attributes as follows:
-
-```
-  "scripts": {
-  "start": "SET NODE_OPTIONS=--openssl-legacy-provider && react-scripts start", 
-  "build": "SET NODE_OPTIONS=--openssl-legacy-provider && react-scripts build", 
-  ...
-    },
-```
-
-2. If you use *Mac OSX or Linux*, include the following command in the `~/.bash_profile` or `~/.bashrc` file.
-
-```
-  export NODE_OPTIONS=--openssl-legacy-provider
-```
+<img width="1238" height="590" alt="image" src="https://github.com/user-attachments/assets/cdd741bd-eb84-4c42-86ce-bb2f4303b618" />
